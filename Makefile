@@ -16,4 +16,4 @@ backend: $(PYTHON)
 
 test: $(PYTHON)
 	uv pip install -p $(PYTHON) -e .[dev]
-	SKIP_NESTED=1 $(PYTHON) -m pytest -v
+	PATH=$(VENV)/bin:$$PATH SKIP_NESTED=1 $(PYTHON) -m pytest -v

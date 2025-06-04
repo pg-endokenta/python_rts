@@ -153,6 +153,12 @@ async def add_bot(req: AddBotRequest):
     return {"status": "ok"}
 
 
+@app.get("/health")
+async def health_check():
+    """Simple endpoint used to verify the API is reachable."""
+    return {"status": "ok"}
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
     await ws.accept()

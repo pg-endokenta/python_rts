@@ -6,7 +6,9 @@ export default function App() {
   const [newBot, setNewBot] = useState('random_bot')
   const [apiStatus, setApiStatus] = useState('')
 
-  const apiBase = import.meta.env.VITE_API_URL || ''
+  // remove trailing slash so fetch(`${apiBase}/foo`) doesn't produce //foo
+  const rawApiBase = import.meta.env.VITE_API_URL || ''
+  const apiBase = rawApiBase.replace(/\/+$/, '')
 
   useEffect(() => {
     const wsUrl = apiBase

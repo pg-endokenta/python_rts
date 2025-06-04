@@ -13,6 +13,8 @@ import './App.css'
 export default function App() {
   const [game, setGame] = useState({ bots: {}, board_size: 20, round: 0 })
   const [prevPos, setPrevPos] = useState({})
+  const [damaged, setDamaged] = useState([])
+  const [attacking, setAttacking] = useState([])
   const [newBot, setNewBot] = useState('random_bot')
   const [apiStatus, setApiStatus] = useState('')
 
@@ -30,13 +32,21 @@ export default function App() {
       console.debug('ws message', data)
       setGame(prev => {
         const moved = {}
+        const hurt = []
+        const attackers = data.attacks ? data.attacks.map(a => a[0]) : []
         for (const [name, info] of Object.entries(prev.bots)) {
           const newInfo = data.bots[name]
-          if (newInfo && (info.pos[0] !== newInfo.pos[0] || info.pos[1] !== newInfo.pos[1])) {
+          if (!newInfo) continue
+          if (info.pos[0] !== newInfo.pos[0] || info.pos[1] !== newInfo.pos[1]) {
             moved[name] = info.pos
+          }
+          if (newInfo.hp < info.hp) {
+            hurt.push(name)
           }
         }
         setPrevPos(moved)
+        setDamaged(hurt)
+        setAttacking(attackers)
         return data
       })
     }
@@ -95,7 +105,7 @@ export default function App() {
       cells.push(
         <div key={x + ',' + y} className='cell'>
           {bot ? (
-            <div className='bot' style={{ backgroundColor: getColor(bot[0]) }} title={bot[0]}>{bot[1].hp}</div>
+            <div className={`bot${damaged.includes(bot[0]) ? ' damaged' : ''}${attacking.includes(bot[0]) ? ' attacking' : ''}`} style={{ backgroundColor: getColor(bot[0]) }} title={bot[0]}>{bot[1].hp}</div>
           ) : arrow}
         </div>
       )
@@ -117,3 +127,4 @@ export default function App() {
     </div>
   )
 }
+

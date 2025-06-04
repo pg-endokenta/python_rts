@@ -22,6 +22,7 @@ class WebGame:
         self.positions: Dict[str, Tuple[int, int]] = {}
         self.round_no = 0
         self._lock = asyncio.Lock()
+        self.attacks: list[tuple[str, str]] = []
 
     def _distance(self, a: Tuple[int, int], b: Tuple[int, int]) -> int:
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
@@ -79,6 +80,7 @@ class WebGame:
                     <= 3
                 ):
                     self.bots[target].hp -= 1
+                    self.attacks.append((name, target))
                     if self.bots[target].hp <= 0:
                         del self.bots[target]
                         self.positions.pop(target, None)
@@ -86,6 +88,7 @@ class WebGame:
     async def step(self) -> Dict[str, Any]:
         async with self._lock:
             self.round_no += 1
+            self.attacks = []
             names = list(self.bots.keys())
             for name in names:
                 bw = self.bots.get(name)
@@ -119,6 +122,7 @@ class WebGame:
                 if bw.hp > 0
             },
             "board_size": self.board_size,
+            "attacks": self.attacks,
         }
 
 

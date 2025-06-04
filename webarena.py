@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, Tuple, Any, Set
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
@@ -130,6 +131,12 @@ def load_bot(module_name: str):
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 game = WebGame(board_size=5)
 clients: Set[WebSocket] = set()

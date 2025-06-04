@@ -61,11 +61,19 @@ curl -X POST -H "Content-Type: application/json" -d '{"bot": "random_bot"}' http
 
 Connect to `ws://localhost:8000/ws` to receive game updates every second.
 
-A basic front‑end built with Vite lives in the `frontend` directory. After installing Node.js dependencies run:
+A basic front‑end built with Vite lives in the `frontend` directory. Install dependencies and start the dev server:
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
 
 and open the shown URL to watch the arena in your browser.
+
+When running inside GitHub Codespaces the API is exposed on a different URL. Set `VITE_API_URL` to the forwarded address before starting the dev server:
+
+```bash
+echo "VITE_API_URL=$(gp url 8000)" > .env
+npm run dev
+```

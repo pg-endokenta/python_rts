@@ -5,17 +5,22 @@ export default function App() {
   const [game, setGame] = useState({ bots: {}, board_size: 5, round: 0 })
   const [newBot, setNewBot] = useState('random_bot')
 
+  const apiBase = import.meta.env.VITE_API_URL || ''
+
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws')
+    const wsUrl = apiBase
+      ? apiBase.replace(/^http/, 'ws') + '/ws'
+      : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws`
+    const ws = new WebSocket(wsUrl)
     ws.onmessage = (ev) => {
       const data = JSON.parse(ev.data)
       setGame(data)
     }
     return () => ws.close()
-  }, [])
+  }, [apiBase])
 
   const addBot = async () => {
-    await fetch('http://localhost:8000/add_bot', {
+    await fetch(`${apiBase}/add_bot`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bot: newBot })

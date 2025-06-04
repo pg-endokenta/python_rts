@@ -1,11 +1,23 @@
-.PHONY: dev test
+.PHONY: frontend backend test
 
-dev:
-	@if command -v docker > /dev/null; then \
-	       docker compose build && docker compose up; \
-	else \
-	       echo "docker is not available"; \
-	fi
+-include .env
+BACKEND_PORT ?= 8000
 
-test:
-	SKIP_NESTED=1 python -m pytest -v
+VENV := .venv
+PYTHON := $(VENV)/bin/python
+
+$(PYTHON):
+	uv venv $(VENV)
+
+frontend:
+	npm install --prefix frontend
+	npm --prefix frontend run dev -- --host
+
+backend: $(PYTHON)
+	uv pip install -p $(PYTHON) -e .
+	$(PYTHON) -m uvicorn backend.webarena:app --reload --port $(BACKEND_PORT)
+
+test: $(PYTHON)
+	uv pip install -p $(PYTHON) -e .[dev]
+	PATH=$(VENV)/bin:$$PATH SKIP_NESTED=1 $(PYTHON) -m pytest -v
+

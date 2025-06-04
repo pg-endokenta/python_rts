@@ -119,7 +119,7 @@ class WebGame:
 
 
 def load_bot(module_name: str):
-    file = Path("bots") / f"{module_name}.py"
+    file = Path(__file__).resolve().parent / "bots" / f"{module_name}.py"
     if not file.exists():
         raise FileNotFoundError(file)
     spec = importlib.util.spec_from_file_location(module_name, file)

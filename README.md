@@ -1,20 +1,31 @@
 # Python RTS Bot Arena
 
-This repository provides a simple RTS style game where bots battle on a small grid. A FastAPI server runs the game logic and a React front‑end visualises the board. Both parts are started through Docker Compose.
+This repository provides a simple RTS style game where bots battle on a small grid. A FastAPI server runs the game logic and a React front‑end visualises the board. Both the back‑end and the front‑end run directly on the host without Docker.
+
+The development environment requires Python 3.11 and Node.js 20 to be available on your system. Python packages are installed into a `.venv` virtual environment using [uv](https://github.com/astral-sh/uv).
 
 ## Usage
 
-Start the development containers (backend and front‑end). The command builds the
-images if necessary and then runs them with Docker Compose:
+Start the back‑end server:
 
 ```bash
-make dev
+make backend
 ```
+The command creates `.venv` and installs the required Python packages automatically if needed. The port is configured via `BACKEND_PORT` which can be set in a `.env` file at the repository root. Copy `.env.example` to `.env` to override the default of `8000`.
+
+Start the front‑end server. The command installs the required JavaScript dependencies if needed and then runs the dev server:
+
+```bash
+make frontend
+```
+
+The front‑end reads the API location from a `.env` file. Copy the provided
+`frontend/.env.example` to `frontend/.env` and adjust the URL if your back‑end
+is not running on `http://localhost:8000`. If you changed `BACKEND_PORT`, make sure this URL matches.
 
 Run the test suite:
 
 ```bash
 make test
 ```
-
-Place your own bots inside the `bots/` directory. They will automatically be mounted into the backend container.
+This command uses the same `.venv` environment, creating it if necessary.

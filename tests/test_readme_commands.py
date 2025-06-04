@@ -4,6 +4,7 @@ import sys
 import time
 from pathlib import Path
 import shutil
+import signal
 
 
 README = Path(__file__).resolve().parents[1] / "README.md"
@@ -66,21 +67,24 @@ def test_readme_commands():
             continue
 
         if cmd.startswith("curl"):
+            port = int(os.environ.get("BACKEND_PORT", "8000"))
             server = subprocess.Popen(
-                "uvicorn webarena:app --reload", shell=True
+                f"uvicorn backend.webarena:app --reload --port {port}",
+                shell=True,
+                start_new_session=True,
             )
             time.sleep(2)
             try:
                 assert run(cmd, timeout=5)
             finally:
-                server.terminate()
+                os.killpg(server.pid, signal.SIGTERM)
                 server.wait(timeout=5)
             continue
 
-        if cmd.startswith("uvicorn webarena:app --reload"):
-            proc = subprocess.Popen(cmd, shell=True)
+        if cmd.startswith("uvicorn backend.webarena:app --reload"):
+            proc = subprocess.Popen(cmd, shell=True, start_new_session=True)
             time.sleep(2)
-            proc.terminate()
+            os.killpg(proc.pid, signal.SIGTERM)
             proc.wait(timeout=5)
             continue
 
@@ -89,9 +93,16 @@ def test_readme_commands():
             continue
 
         if cmd.startswith("npm run dev"):
-            proc = subprocess.Popen(cmd, shell=True, cwd="frontend")
+            proc = subprocess.Popen(cmd, shell=True, cwd="frontend", start_new_session=True)
             time.sleep(2)
-            proc.terminate()
+            os.killpg(proc.pid, signal.SIGTERM)
+            proc.wait(timeout=5)
+            continue
+
+        if cmd in ("make backend", "make frontend"):
+            proc = subprocess.Popen(cmd, shell=True, start_new_session=True)
+            time.sleep(2)
+            os.killpg(proc.pid, signal.SIGTERM)
             proc.wait(timeout=5)
             continue
 

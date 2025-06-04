@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react'
+
+function getColor(name) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const h = Math.abs(hash) % 360
+  return `hsl(${h}, 70%, 50%)`
+}
 import './App.css'
 
 export default function App() {
   const [game, setGame] = useState({ bots: {}, board_size: 20, round: 0 })
+  const [prevPos, setPrevPos] = useState({})
   const [newBot, setNewBot] = useState('random_bot')
   const [apiStatus, setApiStatus] = useState('')
 
@@ -18,7 +28,17 @@ export default function App() {
     ws.onmessage = (ev) => {
       const data = JSON.parse(ev.data)
       console.debug('ws message', data)
-      setGame(data)
+      setGame(prev => {
+        const moved = {}
+        for (const [name, info] of Object.entries(prev.bots)) {
+          const newInfo = data.bots[name]
+          if (newInfo && (info.pos[0] !== newInfo.pos[0] || info.pos[1] !== newInfo.pos[1])) {
+            moved[name] = info.pos
+          }
+        }
+        setPrevPos(moved)
+        return data
+      })
     }
     return () => ws.close()
   }, [apiBase])
@@ -58,9 +78,25 @@ export default function App() {
   for (let y = 0; y < game.board_size; y++) {
     for (let x = 0; x < game.board_size; x++) {
       const bot = Object.entries(game.bots).find(([, info]) => info.pos[0] === x && info.pos[1] === y)
+      const prev = Object.entries(prevPos).find(([, p]) => p[0] === x && p[1] === y)
+      let arrow = null
+      if (prev) {
+        const [name] = prev
+        const cur = game.bots[name].pos
+        const dx = cur[0] - x
+        const dy = cur[1] - y
+        let sym = ''
+        if (dx === 1) sym = '→'
+        else if (dx === -1) sym = '←'
+        else if (dy === 1) sym = '↓'
+        else if (dy === -1) sym = '↑'
+        arrow = <span className='arrow' style={{ color: getColor(name) }}>{sym}</span>
+      }
       cells.push(
         <div key={x + ',' + y} className='cell'>
-          {bot ? `${bot[0]} (${bot[1].hp})` : ''}
+          {bot ? (
+            <div className='bot' style={{ backgroundColor: getColor(bot[0]) }} title={bot[0]}>{bot[1].hp}</div>
+          ) : arrow}
         </div>
       )
     }

@@ -17,6 +17,22 @@
   align-items: center;
   justify-content: center;
   font-size: 0.6rem;
+  position: relative;
+}
+
+.bot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.arrow {
+  font-size: 1rem;
 }
 
 .controls {

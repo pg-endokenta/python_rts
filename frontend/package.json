@@ -1,0 +1,11 @@
+{
+  "name": "python-rts-frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

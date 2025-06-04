@@ -4,7 +4,10 @@ version = "0.1.0"
 description = "Simple RTS bot arena"
 authors = [{name="Unknown"}]
 readme = "README.md"
-dependencies = []
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]"
+]
 requires-python = ">=3.10"
 
 [build-system]

@@ -72,3 +72,27 @@ uv sync
 
 After this the arena can be run with `uv run python arena.py` or by
 running `python arena.py` within the created `.venv`.
+
+## Web server and frontend
+
+To watch battles in the browser start the FastAPI server:
+
+```bash
+uvicorn server:app --reload
+```
+
+The server keeps the game running indefinitely. New bots can be added
+by POSTing to `/bots/{bot_name}` where `bot_name` is a Python file in
+the `bots/` directory without the extension. The current board state is
+available at `/state`.
+
+The `frontend/` folder contains a minimal [Vite](https://vitejs.dev)
+setup. Start it with:
+
+```bash
+npm install
+npm run dev --prefix frontend
+```
+
+This opens a page that polls the server every second and renders the
+board on screen.

@@ -69,3 +69,10 @@ npm run dev
 ```
 
 and open the shown URL to watch the arena in your browser.
+
+When running inside GitHub Codespaces the API is exposed on a different URL. Set `VITE_API_URL` to the forwarded address before starting the dev server:
+
+```bash
+echo "VITE_API_URL=$(gp url 8000)" > frontend/.env
+npm run dev
+```

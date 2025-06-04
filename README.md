@@ -7,6 +7,20 @@ method. The provided `arena.py` script loads all bots from the folder
 and runs a battle where each bot has 10 HP and can move or shoot at
 enemies within range.
 
+## Setup
+
+First create a Python virtual environment using
+[uv](https://github.com/astral-sh/uv). Install `uv` if you don't have it
+already (`pip install uv`) and then run:
+
+```bash
+uv venv
+uv sync
+```
+
+After this the arena can be run with `uv run python arena.py` or by
+running `python arena.py` within the created `.venv`.
+
 Run the arena with:
 
 ```bash
@@ -60,18 +74,14 @@ If anything else is returned, the bot simply skips its turn.
 
 ## Environment management with uv
 
-The project includes a `pyproject.toml` and `uv.lock` so that the
-environment can be managed with [uv](https://github.com/astral-sh/uv).
-Install uv (e.g. `pip install uv`) and then create the virtual
-environment and install dependencies:
+The repository is configured to work with
+[uv](https://github.com/astral-sh/uv). Once you have created the virtual
+environment as shown above you can run commands inside it using
+`uv run`:
 
 ```bash
-uv venv
-uv sync
+uv run python arena.py
 ```
-
-After this the arena can be run with `uv run python arena.py` or by
-running `python arena.py` within the created `.venv`.
 
 ## Web arena
 

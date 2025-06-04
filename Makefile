@@ -5,7 +5,8 @@ frontend:
 	npm --prefix frontend run dev -- --host
 
 backend:
-	uvicorn backend.webarena:app --reload
+	pip install -e .
+	python -m uvicorn backend.webarena:app --reload
 
 test:
 	pip install -e .[dev]

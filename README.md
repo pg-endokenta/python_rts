@@ -11,6 +11,7 @@ Start the back‑end server:
 ```bash
 make backend
 ```
+The command installs the required Python packages automatically if they are not installed.
 
 Start the front‑end server. The command installs the required JavaScript dependencies if needed and then runs the dev server:
 

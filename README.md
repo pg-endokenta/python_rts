@@ -1,15 +1,26 @@
 # Python RTS Bot Arena
 
-This repository provides a simple RTS style game where bots battle on a small grid. A FastAPI server runs the game logic and a React front‑end visualises the board. Both parts are started through Docker Compose.
+This repository provides a simple RTS style game where bots battle on a small grid. A FastAPI server runs the game logic and a React front‑end visualises the board. Both the back‑end and the front‑end run directly on the host without Docker.
+
+The development environment requires Python 3.11 and Node.js 20 to be available on your system.
 
 ## Usage
 
-Start the development containers (backend and front‑end). The command builds the
-images if necessary and then runs them with Docker Compose:
+Start the back‑end server:
 
 ```bash
-make dev
+make backend
 ```
+
+Start the front‑end server. The command installs the required JavaScript dependencies if needed and then runs the dev server:
+
+```bash
+make frontend
+```
+
+The front‑end reads the API location from a `.env` file. Copy the provided
+`frontend/.env.example` to `frontend/.env` and adjust the URL if your back‑end
+is not running on `http://localhost:8000`.
 
 Run the test suite:
 
@@ -17,4 +28,4 @@ Run the test suite:
 make test
 ```
 
-Place your own bots inside the `bots/` directory. They will automatically be mounted into the backend container.
+Place your own bots inside the `backend/bots/` directory. They will automatically be loaded by the server.

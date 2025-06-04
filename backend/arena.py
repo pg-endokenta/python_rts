@@ -142,7 +142,7 @@ def load_bots(folder):
     return bots
 
 
-def main(folder='bots', use_gui=False):
+def main(folder=Path(__file__).resolve().parent / 'bots', use_gui=False):
     bots = load_bots(folder)
     if len(bots) < 2:
         print('Need at least two bots to start the game.')
@@ -154,7 +154,7 @@ def main(folder='bots', use_gui=False):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Run bot arena')
-    parser.add_argument('folder', nargs='?', default='bots', help='Bot folder')
+    parser.add_argument('folder', nargs='?', default=str(Path(__file__).resolve().parent / 'bots'), help='Bot folder')
     parser.add_argument('--gui', action='store_true', help='Show GUI')
     args = parser.parse_args()
     main(args.folder, use_gui=args.gui)

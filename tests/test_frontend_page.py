@@ -26,7 +26,7 @@ def test_frontend_serves_page(tmp_path):
     subprocess.run("npm install", shell=True, cwd="frontend", check=True)
 
     backend = subprocess.Popen(
-        "uvicorn webarena:app --reload", shell=True
+        "uvicorn backend.webarena:app --reload", shell=True
     )
     try:
         assert wait_port(8000)

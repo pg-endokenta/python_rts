@@ -67,7 +67,7 @@ def test_readme_commands():
 
         if cmd.startswith("curl"):
             server = subprocess.Popen(
-                "uvicorn webarena:app --reload", shell=True
+                "uvicorn backend.webarena:app --reload", shell=True
             )
             time.sleep(2)
             try:
@@ -77,7 +77,7 @@ def test_readme_commands():
                 server.wait(timeout=5)
             continue
 
-        if cmd.startswith("uvicorn webarena:app --reload"):
+        if cmd.startswith("uvicorn backend.webarena:app --reload"):
             proc = subprocess.Popen(cmd, shell=True)
             time.sleep(2)
             proc.terminate()
@@ -90,6 +90,13 @@ def test_readme_commands():
 
         if cmd.startswith("npm run dev"):
             proc = subprocess.Popen(cmd, shell=True, cwd="frontend")
+            time.sleep(2)
+            proc.terminate()
+            proc.wait(timeout=5)
+            continue
+
+        if cmd in ("make backend", "make frontend"):
+            proc = subprocess.Popen(cmd, shell=True)
             time.sleep(2)
             proc.terminate()
             proc.wait(timeout=5)

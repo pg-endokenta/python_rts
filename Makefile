@@ -1,11 +1,11 @@
-.PHONY: dev test
+.PHONY: frontend backend test
 
-dev:
-	@if command -v docker > /dev/null; then \
-	       docker compose build && docker compose up; \
-	else \
-	       echo "docker is not available"; \
-	fi
+frontend:
+	npm install --prefix frontend
+	npm --prefix frontend run dev -- --host
+
+backend:
+	uvicorn backend.webarena:app --reload
 
 test:
 	SKIP_NESTED=1 python -m pytest -v

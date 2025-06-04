@@ -38,3 +38,11 @@
 .controls {
   margin-top: 1rem;
 }
+
+.bot.damaged {
+  box-shadow: 0 0 5px 2px red;
+}
+
+.bot.attacking {
+  box-shadow: 0 0 5px 2px yellow;
+}

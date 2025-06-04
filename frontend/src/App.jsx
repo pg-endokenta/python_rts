@@ -15,6 +15,7 @@ export default function App() {
   const [prevPos, setPrevPos] = useState({})
   const [damaged, setDamaged] = useState([])
   const [attacking, setAttacking] = useState([])
+  const [attacks, setAttacks] = useState([])
   const [newBot, setNewBot] = useState('random_bot')
   const [apiStatus, setApiStatus] = useState('')
 
@@ -34,6 +35,7 @@ export default function App() {
         const moved = {}
         const hurt = []
         const attackers = data.attacks ? data.attacks.map(a => a[0]) : []
+        const attackPairs = data.attacks || []
         for (const [name, info] of Object.entries(prev.bots)) {
           const newInfo = data.bots[name]
           if (!newInfo) continue
@@ -47,6 +49,7 @@ export default function App() {
         setPrevPos(moved)
         setDamaged(hurt)
         setAttacking(attackers)
+        setAttacks(attackPairs)
         return data
       })
     }
@@ -84,6 +87,10 @@ export default function App() {
     }
   }
 
+  const CELL_SIZE = 40
+  const GAP = 2
+  const boardPixel = game.board_size * CELL_SIZE + (game.board_size - 1) * GAP
+
   const cells = []
   for (let y = 0; y < game.board_size; y++) {
     for (let x = 0; x < game.board_size; x++) {
@@ -112,11 +119,27 @@ export default function App() {
     }
   }
 
+  const lines = attacks.map(([attacker, target]) => {
+    const a = game.bots[attacker]
+    const b = game.bots[target]
+    if (!a || !b) return null
+    const x1 = a.pos[0] * (CELL_SIZE + GAP) + CELL_SIZE / 2
+    const y1 = a.pos[1] * (CELL_SIZE + GAP) + CELL_SIZE / 2
+    const x2 = b.pos[0] * (CELL_SIZE + GAP) + CELL_SIZE / 2
+    const y2 = b.pos[1] * (CELL_SIZE + GAP) + CELL_SIZE / 2
+    return <line key={`${attacker}-${target}-${game.round}`} x1={x1} y1={y1} x2={x2} y2={y2} className='laser-line' />
+  })
+
   return (
     <div className='container'>
       <h1>Round {game.round}</h1>
-      <div className='board' style={{ gridTemplateColumns: `repeat(${game.board_size}, 40px)` }}>
-        {cells}
+      <div className='board-container' style={{ width: boardPixel, height: boardPixel }}>
+        <div className='board' style={{ gridTemplateColumns: `repeat(${game.board_size}, ${CELL_SIZE}px)` }}>
+          {cells}
+        </div>
+        <svg className='laser-lines' width={boardPixel} height={boardPixel}>
+          {lines}
+        </svg>
       </div>
       <div className='controls'>
         <input value={newBot} onChange={e => setNewBot(e.target.value)} />

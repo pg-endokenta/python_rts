@@ -9,6 +9,23 @@
   margin-bottom: 1rem;
 }
 
+.board-container {
+  position: relative;
+  display: inline-block;
+}
+
+.laser-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.laser-line {
+  stroke: red;
+  stroke-width: 2;
+}
+
 .cell {
   width: 40px;
   height: 40px;

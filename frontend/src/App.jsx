@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 export default function App() {
-  const [game, setGame] = useState({ bots: {}, board_size: 5, round: 0 })
+  const [game, setGame] = useState({ bots: {}, board_size: 20, round: 0 })
   const [newBot, setNewBot] = useState('random_bot')
   const [apiStatus, setApiStatus] = useState('')
 

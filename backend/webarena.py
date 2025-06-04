@@ -16,7 +16,7 @@ class BotWrapper:
 
 
 class WebGame:
-    def __init__(self, board_size: int = 5):
+    def __init__(self, board_size: int = 20):
         self.board_size = board_size
         self.bots: Dict[str, BotWrapper] = {}
         self.positions: Dict[str, Tuple[int, int]] = {}
@@ -79,14 +79,17 @@ class WebGame:
                     <= 3
                 ):
                     self.bots[target].hp -= 1
+                    if self.bots[target].hp <= 0:
+                        del self.bots[target]
+                        self.positions.pop(target, None)
 
     async def step(self) -> Dict[str, Any]:
         async with self._lock:
             self.round_no += 1
             names = list(self.bots.keys())
             for name in names:
-                bw = self.bots[name]
-                if bw.hp <= 0:
+                bw = self.bots.get(name)
+                if not bw or bw.hp <= 0:
                     continue
                 state = {
                     "self_hp": bw.hp,
@@ -95,7 +98,7 @@ class WebGame:
                     "enemies": {
                         n: {"hp": self.bots[n].hp, "pos": self.positions[n]}
                         for n in names
-                        if n != name and self.bots[n].hp > 0
+                        if n != name and n in self.bots and self.bots[n].hp > 0
                     },
                 }
                 if not state["enemies"]:
@@ -113,6 +116,7 @@ class WebGame:
             "bots": {
                 name: {"hp": bw.hp, "pos": self.positions[name]}
                 for name, bw in self.bots.items()
+                if bw.hp > 0
             },
             "board_size": self.board_size,
         }
@@ -138,7 +142,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-game = WebGame(board_size=5)
+game = WebGame(board_size=20)
 clients: Set[WebSocket] = set()
 
 

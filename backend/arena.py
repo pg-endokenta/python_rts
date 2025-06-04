@@ -8,7 +8,7 @@ except Exception:
     tk = None
 
 class Game:
-    def __init__(self, bots, board_size=5, use_gui=False):
+    def __init__(self, bots, board_size=20, use_gui=False):
         # store hp and position for each bot
         self.bots = {bot.name: {'bot': bot, 'hp': 10} for bot in bots}
         self.board_size = board_size
@@ -83,6 +83,13 @@ class Game:
                     print(
                         f"{name} shoots {target}. {target} HP: {self.bots[target]['hp']}"
                     )
+                    if self.bots[target]['hp'] <= 0:
+                        del self.bots[target]
+                        del self.positions[target]
+                        if self.use_gui:
+                            label = self.labels.pop(target, None)
+                            if label is not None:
+                                label.destroy()
 
     def run(self):
         round_no = 0
@@ -93,8 +100,9 @@ class Game:
             print(f"Round {round_no}")
             if self.use_gui:
                 self._update_gui()
-            for name, info in list(self.bots.items()):
-                if info['hp'] <= 0:
+            for name in list(self.bots.keys()):
+                info = self.bots.get(name)
+                if not info or info['hp'] <= 0:
                     continue
                 state = {
                     'self_hp': info['hp'],

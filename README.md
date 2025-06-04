@@ -28,4 +28,7 @@ Run the test suite:
 make test
 ```
 
+The `make test` target installs the required Python packages automatically the
+first time it is run, so no additional setup is necessary.
+
 Place your own bots inside the `backend/bots/` directory. They will automatically be loaded by the server.

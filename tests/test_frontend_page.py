@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import time
+import signal
 import pytest
 
 
@@ -25,15 +26,22 @@ def test_frontend_serves_page(tmp_path):
     # install dependencies
     subprocess.run("npm install", shell=True, cwd="frontend", check=True)
 
+    port = int(os.environ.get("BACKEND_PORT", "8000"))
     backend = subprocess.Popen(
-        "uvicorn backend.webarena:app --reload", shell=True
+        f"uvicorn backend.webarena:app --reload --port {port}",
+        shell=True,
+        start_new_session=True,
     )
     try:
-        assert wait_port(8000)
+        assert wait_port(port)
         env = os.environ.copy()
-        env["VITE_API_URL"] = "http://localhost:8000"
+        env["VITE_API_URL"] = f"http://localhost:{port}"
         frontend = subprocess.Popen(
-            "npm run dev -- --host", shell=True, cwd="frontend", env=env
+            "npm run dev -- --host",
+            shell=True,
+            cwd="frontend",
+            env=env,
+            start_new_session=True,
         )
         try:
             assert wait_port(5173)
@@ -43,8 +51,8 @@ def test_frontend_serves_page(tmp_path):
             ).decode()
             assert "<div id=\"root\"></div>" in out
         finally:
-            frontend.terminate()
+            os.killpg(frontend.pid, signal.SIGTERM)
             frontend.wait(timeout=5)
     finally:
-        backend.terminate()
+        os.killpg(backend.pid, signal.SIGTERM)
         backend.wait(timeout=5)

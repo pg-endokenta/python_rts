@@ -11,7 +11,7 @@ Start the back‑end server:
 ```bash
 make backend
 ```
-The command creates `.venv` and installs the required Python packages automatically if needed.
+The command creates `.venv` and installs the required Python packages automatically if needed. The port is configured via `BACKEND_PORT` which can be set in a `.env` file at the repository root. Copy `.env.example` to `.env` to override the default of `8000`.
 
 Start the front‑end server. The command installs the required JavaScript dependencies if needed and then runs the dev server:
 
@@ -21,7 +21,7 @@ make frontend
 
 The front‑end reads the API location from a `.env` file. Copy the provided
 `frontend/.env.example` to `frontend/.env` and adjust the URL if your back‑end
-is not running on `http://localhost:8000`.
+is not running on `http://localhost:8000`. If you changed `BACKEND_PORT`, make sure this URL matches.
 
 Run the test suite:
 

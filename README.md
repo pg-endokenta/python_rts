@@ -1,54 +1,34 @@
 # Python RTS Bot Arena
 
-This repository contains a simple arena for running Python bots against
-one another on a small grid. Place your bot files in the `bots/`
-directory. Each bot must define a `Bot` class with an `act(state)`
-method. The provided `arena.py` script loads all bots from the folder
-and runs a battle where each bot has 10 HP and can move or shoot at
-enemies within range.
+This repository contains a simple arena for running Python bots against one another on a small grid. Place your bot files in the `bots/` directory. Each bot must define a `Bot` class with an `act(state)` method. The provided scripts allow running matches in the terminal or via a small web server.
 
-## Setup
+## Running with Docker
 
-First create a Python virtual environment using
-[uv](https://github.com/astral-sh/uv). Install `uv` if you don't have it
-already (`pip install uv`) and then run:
+The recommended way to try the arena is using Docker Compose. Make sure you have Docker and Docker Compose installed then build the image:
 
 ```bash
-uv venv
-uv sync
+docker compose build
 ```
 
-After this the arena can be run with `uv run python arena.py` or by
-running `python arena.py` within the created `.venv`.
-
-Run the arena with:
+Start the web arena server:
 
 ```bash
-python arena.py
+docker compose up
 ```
 
-You can also specify a different bot directory:
+The API will be available on `http://localhost:8000`.
+
+You can also run a single match in the terminal:
 
 ```bash
-python arena.py path/to/bots
+docker compose run --rm app python arena.py
 ```
 
-## GUI mode
-
-If `tkinter` is available on your system you can run the arena with a
-simple GUI by passing `--gui`:
-
-```bash
-python arena.py --gui
-```
-
-The flag can be combined with a custom bot directory as well.
+Bots placed inside the `bots/` directory on the host are mounted into the container automatically.
 
 ## Writing your own bots
 
-Place a Python file in the `bots/` directory defining a class `Bot` with
-an `act(state)` method. The `state` dictionary passed to `act` contains
-your current HP and position as well as information about the enemies:
+Place a Python file in the `bots/` directory defining a class `Bot` with an `act(state)` method. The `state` dictionary passed to `act` contains your current HP and position as well as information about the enemies:
 
 ```
 state = {
@@ -64,48 +44,24 @@ state = {
 
 Return a tuple to describe your action:
 
-- `('move', direction)` moves one tile in the given direction (`up`,
-  `down`, `left` or `right`). A move that would leave the board or bump
-  into another bot is ignored.
-- `('attack', enemy_name)` shoots at the given enemy if it is within a
-  Manhattan distance of 3 tiles.
+- `('move', direction)` moves one tile in the given direction (`up`, `down`, `left` or `right`). A move that would leave the board or bump into another bot is ignored.
+- `('attack', enemy_name)` shoots at the given enemy if it is within a Manhattan distance of 3 tiles.
 
 If anything else is returned, the bot simply skips its turn.
 
-## Environment management with uv
-
-The repository is configured to work with
-[uv](https://github.com/astral-sh/uv). Once you have created the virtual
-environment as shown above you can run commands inside it using
-`uv run`:
-
-```bash
-uv run python arena.py
-```
-
 ## Web arena
 
-A simple web server is provided in `webarena.py` using FastAPI. It runs an
-endless game loop where new bots can be added via an HTTP request and the
-state is broadcast over a WebSocket.
-
-Start the server:
-
-```bash
-uvicorn webarena:app --reload
-```
+A simple FastAPI server lives in `webarena.py`. It runs an endless game loop where new bots can be added via an HTTP request and the state is broadcast over a WebSocket. When started through Docker Compose, it is already running.
 
 Add a bot (specify the module name without `.py`):
 
 ```bash
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"bot": "random_bot"}' http://localhost:8000/add_bot
+curl -X POST -H "Content-Type: application/json" -d '{"bot": "random_bot"}' http://localhost:8000/add_bot
 ```
 
 Connect to `ws://localhost:8000/ws` to receive game updates every second.
 
-A basic front‑end built with Vite lives in the `frontend` directory. After
-installing Node.js dependencies run:
+A basic front‑end built with Vite lives in the `frontend` directory. After installing Node.js dependencies run:
 
 ```bash
 npm install

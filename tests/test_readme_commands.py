@@ -2,6 +2,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+import shutil
 
 
 README = Path(__file__).resolve().parents[1] / "README.md"
@@ -51,6 +52,13 @@ def test_readme_commands():
     for cmd in commands:
         if "path/to/bots" in cmd:
             cmd = cmd.replace("path/to/bots", "bots")
+
+        if cmd.startswith("docker ") or cmd.startswith("docker-compose"):
+            if shutil.which("docker") is None:
+                # Skip docker commands when docker is unavailable
+                continue
+            assert run(cmd, timeout=120)
+            continue
 
         if cmd.startswith("curl"):
             server = subprocess.Popen(

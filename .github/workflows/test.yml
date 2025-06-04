@@ -21,9 +21,10 @@ jobs:
           node-version: '20'
       - name: Install uv
         run: pip install uv
+      - name: Set up virtualenv
+        run: uv venv .venv
       - name: Install Python dependencies
-        run: |
-          uv pip install -e .[dev]
+        run: uv pip install -p .venv/bin/python -e .[dev]
       - name: Install frontend dependencies
         run: |
           npm install --prefix frontend

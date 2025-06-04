@@ -72,3 +72,34 @@ uv sync
 
 After this the arena can be run with `uv run python arena.py` or by
 running `python arena.py` within the created `.venv`.
+
+## Web arena
+
+A simple web server is provided in `webarena.py` using FastAPI. It runs an
+endless game loop where new bots can be added via an HTTP request and the
+state is broadcast over a WebSocket.
+
+Start the server:
+
+```bash
+uvicorn webarena:app --reload
+```
+
+Add a bot (specify the module name without `.py`):
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"bot": "random_bot"}' http://localhost:8000/add_bot
+```
+
+Connect to `ws://localhost:8000/ws` to receive game updates every second.
+
+A basic front‑end built with Vite lives in the `frontend` directory. After
+installing Node.js dependencies run:
+
+```bash
+npm install
+npm run dev
+```
+
+and open the shown URL to watch the arena in your browser.

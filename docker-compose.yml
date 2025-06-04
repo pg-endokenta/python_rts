@@ -7,3 +7,13 @@ services:
     ports:
       - "8000:8000"
     command: uvicorn webarena:app --host 0.0.0.0 --reload
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://app:8000
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host"

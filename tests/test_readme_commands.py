@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import time
@@ -49,9 +50,13 @@ def run(cmd, cwd=None, timeout=30):
 
 def test_readme_commands():
     commands = extract_commands()
+    skip_nested = os.environ.get("SKIP_NESTED") == "1"
     for cmd in commands:
         if "path/to/bots" in cmd:
             cmd = cmd.replace("path/to/bots", "bots")
+
+        if skip_nested and (cmd == "make test" or cmd.startswith("python -m pytest")):
+            continue
 
         if cmd.startswith("docker ") or cmd.startswith("docker-compose"):
             if shutil.which("docker") is None:

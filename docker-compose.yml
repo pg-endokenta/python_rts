@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    volumes:
+      - ./bots:/app/bots
+    ports:
+      - "8000:8000"
+    command: uvicorn webarena:app --host 0.0.0.0 --reload
